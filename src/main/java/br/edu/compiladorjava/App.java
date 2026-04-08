@@ -1,4 +1,4 @@
-package br.edu.compiladorjava;
+package br.univasf.compiladorjava;
 
 public final class App {
 
