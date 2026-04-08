@@ -1,4 +1,4 @@
-package br.univasf.compiladorjava;
+package br.edu.compiladorjava;
 
 public final class App {
 
@@ -10,6 +10,6 @@ public final class App {
     }
 
     public static String startupMessage() {
-        return "Compilador Java pronto para desenvolvimento.";
+        return "Compilador Java UNIVASF";
     }
 }

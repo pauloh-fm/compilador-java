@@ -8,6 +8,6 @@ class AppTest {
 
     @Test
     void startupMessageShouldDescribeTheProjectState() {
-        assertEquals("Compilador Java pronto para desenvolvimento.", App.startupMessage());
+        assertEquals("Compilador Java UNIVASF", App.startupMessage());
     }
 }
