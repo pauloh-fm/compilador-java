@@ -12,16 +12,23 @@ public class Lexer {
 
     static {
         KEYWORDS.put("and", TokenType.AND);
+        KEYWORDS.put("begin", TokenType.BEGIN);
+        KEYWORDS.put("boolean", TokenType.BOOLEAN);
         KEYWORDS.put("class", TokenType.CLASS);
         KEYWORDS.put("else", TokenType.ELSE);
+        KEYWORDS.put("end", TokenType.END);
         KEYWORDS.put("false", TokenType.FALSE);
         KEYWORDS.put("for", TokenType.FOR);
         KEYWORDS.put("fun", TokenType.FUN);
+        KEYWORDS.put("do", TokenType.DO);
         KEYWORDS.put("if", TokenType.IF);
+        KEYWORDS.put("integer", TokenType.INTEGER);
         KEYWORDS.put("nil", TokenType.NIL);
         KEYWORDS.put("or", TokenType.OR);
         KEYWORDS.put("print", TokenType.PRINT);
+        KEYWORDS.put("program", TokenType.PROGRAM);
         KEYWORDS.put("return", TokenType.RETURN);
+        KEYWORDS.put("then", TokenType.THEN);
         KEYWORDS.put("true", TokenType.TRUE);
         KEYWORDS.put("var", TokenType.VAR);
         KEYWORDS.put("while", TokenType.WHILE);
@@ -75,6 +82,9 @@ public class Lexer {
                 break;
             case ',':
                 addToken(TokenType.COMMA);
+                break;
+            case ':':
+                addToken(match('=') ? TokenType.ASSIGN : TokenType.COLON);
                 break;
             case '.':
                 addToken(TokenType.DOT);
