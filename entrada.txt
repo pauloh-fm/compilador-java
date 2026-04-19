@@ -1,0 +1,30 @@
+program exemplo;
+
+! Declaração de variáveis
+var x : integer;
+var y : integer;
+var flag : boolean;
+
+begin
+
+    ! Inicialização
+    x := 10;
+    y := 5;
+
+    ! Operações aritméticas
+    x := x + y * 2;
+
+    ! Condicional
+    if x > y then
+        flag := true
+    else
+        flag := false;
+
+    ! Loop while
+    while x > 0 do
+    begin
+        ! decremento
+        x := x - 1;
+    end;
+
+end.
