@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Lexer {
 
@@ -27,27 +28,38 @@ public class Lexer {
     }
 
     private final String source;
+    private final Consumer<String> trace;
     private final List<Token> tokens = new ArrayList<>();
     private int start;
     private int current;
     private int line = 1;
 
     public Lexer(String source) {
+        this(source, null);
+    }
+
+    public Lexer(String source, Consumer<String> trace) {
         this.source = source == null ? "" : source;
+        this.trace = trace;
     }
 
     public List<Token> scanTokens() {
+        trace("Iniciando analise lexica");
         while (!isAtEnd()) {
             start = current;
             scanToken();
         }
 
-        tokens.add(new Token(TokenType.EOF, "", null, line));
+        Token eof = new Token(TokenType.EOF, "", null, line);
+        tokens.add(eof);
+        trace("Token: " + eof);
+        trace("Fim da analise lexica");
         return List.copyOf(tokens);
     }
 
     private void scanToken() {
         char c = advance();
+        trace("Lendo caractere '" + printable(c) + "' na linha " + line);
         switch (c) {
             case '(':
                 addToken(TokenType.LEFT_PAREN);
@@ -192,7 +204,24 @@ public class Lexer {
     }
 
     private void addToken(TokenType type, Object literal) {
-        tokens.add(new Token(type, source.substring(start, current), literal, line));
+        Token token = new Token(type, source.substring(start, current), literal, line);
+        tokens.add(token);
+        trace("Token: " + token);
+    }
+
+    private void trace(String message) {
+        if (trace != null) {
+            trace.accept(message);
+        }
+    }
+
+    private static String printable(char c) {
+        return switch (c) {
+            case '\n' -> "\\n";
+            case '\r' -> "\\r";
+            case '\t' -> "\\t";
+            default -> String.valueOf(c);
+        };
     }
 
     private static boolean isDigit(char c) {
