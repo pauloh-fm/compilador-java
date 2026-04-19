@@ -18,7 +18,6 @@ class LexerTest {
                 new Token(TokenType.NUMBER, "123", 123.0, 1),
                 new Token(TokenType.PLUS, "+", null, 1),
                 new Token(TokenType.IDENTIFIER, "foo", null, 1),
-                new Token(TokenType.EOF, "", null, 1)
-        ), tokens);
+                new Token(TokenType.EOF, "", null, 1)), tokens);
     }
 }
