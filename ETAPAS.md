@@ -7,20 +7,20 @@ Este arquivo organiza as atividades do trabalho com base na gramática em `lingu
 - [ ] Criar, a partir da gramática fornecida, uma relação dos tokens da linguagem.
 - [ ] Obter uma gramática léxica para este conjunto.
 - [ ] Obter uma expressão regular para este conjunto.
-- [ ] Implementar o analisador léxico conforme o modelo do livro.
+- [x] Implementar o analisador léxico conforme o modelo do livro.
 - [ ] Testar e documentar o analisador léxico.
 
 ## Etapa 2 - Análise Sintática
 
-- [ ] Verificar se a gramática da linguagem é LL(1) e justificar a resposta.
+- [ ] Verificar se a gramática da linguagem e LL(1) e justificar a resposta.
 - [ ] Obter uma gramática equivalente que seja LL(1).
-- [ ] Demonstrar, por meio dos conjuntos `first` e `follow`, que a nova gramática é LL(1).
+- [ ] Demonstrar, por meio dos conjuntos `first` e `follow`, que a nova gramática e LL(1).
 - [ ] Obter, a partir da nova gramática, uma gramática sintática para a linguagem.
-- [ ] Implementar, por método recursivo descendente, um analisador léxico para a linguagem.
-- [ ] Implementar, por método recursivo descendente, um analisador sintático para a linguagem.
-- [ ] Integrar os analisadores léxico e sintático.
-- [ ] Projetar e implementar uma interface com o usuário, em linha de comando ou janela.
-- [ ] Desenvolver os casos de teste.
+- [x] Implementar, por método recursivo descendente, um analisador léxico para a linguagem.
+- [x] Implementar, por método recursivo descendente, um analisador sintático para a linguagem.
+- [x] Integrar os analisadores léxico e sintático.
+- [x] Projetar e implementar uma interface com o usuário, em linha de comando ou janela.
+- [x] Desenvolver os casos de teste.
 - [ ] Documentar o trabalho: sintaxe da linguagem-fonte, estrutura léxica, estrutura sintática, exemplos de programas-fonte, transformações gramaticais efetuadas, técnicas de análise empregadas, estruturas de dados e algoritmos utilizados, descrição da interface, mensagens de erro, exemplos de entradas e saídas, testes, manual de instalação e manual de operação.
 
 ## Etapa 3 - Montagem e Visualização da AST

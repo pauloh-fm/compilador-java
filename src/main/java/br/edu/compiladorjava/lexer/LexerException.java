@@ -2,5 +2,11 @@ package br.edu.compiladorjava.lexer;
 
 public class LexerException extends RuntimeException {
 
-    // TODO: Definir construtores e mensagens de erro lexico.
+    public LexerException(String message) {
+        super(message);
+    }
+
+    public LexerException(int line, int column, String message) {
+        super("Erro lexico na linha " + line + ", coluna " + column + ": " + message);
+    }
 }

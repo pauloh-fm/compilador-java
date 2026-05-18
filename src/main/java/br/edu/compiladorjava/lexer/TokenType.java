@@ -1,7 +1,37 @@
 package br.edu.compiladorjava.lexer;
 
 public enum TokenType {
-    ;
-
-    // TODO: Definir todos os tipos de token da linguagem.
+    EOF,
+    IDENTIFIER,
+    INTEGER_LITERAL,
+    FLOAT_LITERAL,
+    PROGRAM,
+    VAR,
+    INTEGER,
+    BOOLEAN,
+    BEGIN,
+    END,
+    IF,
+    THEN,
+    ELSE,
+    WHILE,
+    DO,
+    TRUE,
+    FALSE,
+    OR,
+    AND,
+    PLUS,
+    MINUS,
+    STAR,
+    SLASH,
+    ASSIGN,
+    LESS,
+    GREATER,
+    EQUAL,
+    COMMA,
+    SEMICOLON,
+    COLON,
+    LPAREN,
+    RPAREN,
+    DOT
 }

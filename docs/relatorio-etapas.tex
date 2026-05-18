@@ -1,0 +1,177 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{amssymb}
+
+\geometry{margin=2.5cm}
+
+\newcommand{\cmark}{\checkmark}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\checked}{\textbf{[x]}}
+\newcommand{\unchecked}{\textbf{[ ]}}
+
+\title{Documentação do Compilador Java}
+\author{Projeto de Compiladores}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Objetivo}
+
+Este documento registra a evolução do projeto por etapas, com o status de cada item, as justificativas técnicas necessárias e referências diretas para a implementação no código-fonte.
+
+O objetivo é manter uma documentação viva, fácil de exportar para PDF e simples de atualizar à medida que o compilador evolui.
+
+\section{Etapa 1 -- Análise Léxica}
+
+\subsection*{Checklist}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.10\textwidth} p{0.78\textwidth}}
+\checked & Criar, a partir da gramática fornecida, uma relação dos tokens da linguagem. \\
+\checked & Obter uma gramática léxica para este conjunto. \\
+\checked & Obter uma expressão regular para este conjunto. \\
+\checked & Implementar o analisador léxico conforme o modelo do livro. \\
+\checked & Testar e documentar o analisador léxico. \\
+\end{longtable}
+
+\subsection*{Relação de tokens}
+
+Os tokens implementados cobrem palavras-chave, identificadores, literais, operadores e delimitadores. O conjunto principal é:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Palavras-chave: \texttt{program}, \texttt{var}, \texttt{integer}, \texttt{boolean}, \texttt{begin}, \texttt{end}, \texttt{if}, \texttt{then}, \texttt{else}, \texttt{while}, \texttt{do}, \texttt{true}, \texttt{false}, \texttt{or}, \texttt{and}.
+    \item Identificadores: sequências iniciadas por letra ou sublinhado, seguidas por letras, dígitos ou sublinhado.
+    \item Literais: inteiros e reais simples, incluindo formas como \texttt{2.} e \texttt{.5}.
+    \item Operadores: \texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{:=}, \texttt{<}, \texttt{>}, \texttt{=}.
+    \item Delimitadores: \texttt{,}, \texttt{;}, \texttt{:}, \texttt{(}, \texttt{)}, \texttt{.}.
+\end{itemize}
+
+\subsection*{Gramática léxica}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{program} \(\rightarrow\) \checked palavra-chave reservada.
+    \item \texttt{var} \(\rightarrow\) \checked palavra-chave reservada.
+    \item \texttt{identifier} \(\rightarrow\) letra ou \_ seguida de letras, dígitos ou \_.
+    \item \texttt{integer-literal} \(\rightarrow\) sequência de dígitos.
+    \item \texttt{float-literal} \(\rightarrow\) dígitos com ponto opcional ou ponto seguido de dígitos.
+    \item Comentários: bloco \texttt{/* ... */}, linha \texttt{// ...}, e bloco entre chaves \texttt{{...}}.
+\end{itemize}
+
+\subsection*{Expressões regulares}
+
+Representação resumida dos principais padrões:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Identificador: \texttt{[A-Za-z\_][A-Za-z0-9\_]*}
+    \item Inteiro: \texttt{[0-9]+}
+    \item Float: \texttt{([0-9]+\\.[0-9]*|\\.[0-9]+)}
+    \item Espaço em branco: \texttt{[\\t\\r\\n ]+}
+    \item Comentário de linha: \texttt{//.*}
+    \item Comentário de bloco: \texttt{/\\*.*?\\*/}
+\end{itemize}
+
+\subsection*{Implementação}
+
+O lexer está implementado em \href{../src/main/java/br/edu/compiladorjava/lexer/Lexer.java}{src/main/java/br/edu/compiladorjava/lexer/Lexer.java}. Ele percorre a fonte com controle de linha e coluna, reconhece palavras reservadas antes de classificar identificadores e ignora espaços e comentários.
+
+Os tipos de token estão definidos em \href{../src/main/java/br/edu/compiladorjava/lexer/TokenType.java}{TokenType.java}, e a estrutura de token em \href{../src/main/java/br/edu/compiladorjava/lexer/Token.java}{Token.java}.
+
+\subsection*{Testes}
+
+Os testes automatizados cobrem:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item programa simples com sequência básica de tokens;
+    \item comentários e literais float;
+    \item erro léxico para caractere inválido.
+\end{itemize}
+
+Os testes estão em \href{../src/test/java/br/edu/compiladorjava/lexer/LexerTest.java}{LexerTest.java}.
+
+\section{Etapa 2 -- Análise Sintática}
+
+\subsection*{Checklist}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.10\textwidth} p{0.78\textwidth}}
+\checked & Verificar se a gramática da linguagem é LL(1). Justificar a sua resposta. \\
+\checked & Obter uma gramática equivalente que seja LL(1). \\
+\checked & Demonstrar, através do cálculo dos conjuntos first e follow, que a nova gramática é LL(1). \\
+\checked & Obter, a partir da nova gramática, uma gramática sintática para a linguagem. \\
+\checked & Implementar, através do método recursivo descendente, um analisador léxico para a linguagem. \\
+\checked & Implementar, através do método recursivo descendente, um analisador sintático para a linguagem. \\
+\checked & Integrar os analisadores léxico e sintático. \\
+\checked & Projetar e implementar uma interface com o usuário (linha de comando ou janela). \\
+\checked & Desenvolver os casos de teste. \\
+\unchecked & Documentar o trabalho completo da linguagem-fonte, estrutura léxica, sintática, exemplos, transformações gramaticais, técnicas de análise, estruturas de dados, interface, erros, entradas/saídas, testes, manual de instalação e manual de operação. \\
+\end{longtable}
+
+\subsection*{Verificação LL(1)}
+
+A gramática original não é LL(1), pois possui recursão à esquerda e prefixos comuns em produções de expressões e listas. Isso impede a escolha determinística de uma produção com apenas um símbolo de lookahead.
+
+Foi adotada uma gramática equivalente sem recursão à esquerda e com fatoração à esquerda, adequada para análise preditiva recursiva descendente.
+
+\subsection*{Gramática equivalente}
+
+Forma resumida utilizada pelo parser:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{programa} \(\rightarrow\) \texttt{program id ; corpo .}
+    \item \texttt{corpo} \(\rightarrow\) \texttt{declarações comando-composto}
+    \item \texttt{declarações} \(\rightarrow\) \texttt{var lista-de-ids : tipo ; declarações | \(\epsilon\)}
+    \item \texttt{comando} \(\rightarrow\) \texttt{atribuição | condicional | iterativo | comando-composto}
+    \item \texttt{expressão} \(\rightarrow\) \texttt{expressão-simples resto-expressão}
+    \item \texttt{expressão-simples} \(\rightarrow\) \texttt{termo resto-expressão-simples}
+    \item \texttt{termo} \(\rightarrow\) \texttt{fator resto-termo}
+\end{itemize}
+
+\subsection*{Justificativa com first/follow}
+
+Os conjuntos foram usados para validar as produções com alternativas e \(\epsilon\). Em cada caso, os conjuntos \texttt{FIRST} das alternativas são disjuntos; quando há produção vazia, a interseção entre \texttt{FIRST} da alternativa não vazia e \texttt{FOLLOW} do não-terminal é vazia.
+
+Casos principais:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \texttt{declarações}: começa com \texttt{var} ou \(\epsilon\), e o \texttt{FOLLOW} vem do início do bloco.
+    \item \texttt{lista-de-comandos}: começa com \texttt{begin}, \texttt{if}, \texttt{while} ou identificador, e a alternativa vazia é escolhida quando aparece \texttt{end}.
+    \item \texttt{resto-expressão}, \texttt{resto-expressão-simples} e \texttt{resto-termo}: separaram os níveis de precedência e resolvem a recursão à esquerda.
+\end{itemize}
+
+\subsection*{Implementação}
+
+O parser recursivo descendente está em \href{../src/main/java/br/edu/compiladorjava/parser/Parser.java}{Parser.java}. Ele consome a sequência de tokens produzida pelo lexer e valida a estrutura do programa, declarações, comandos e expressões.
+
+A integração com a interface de linha de comando está em \href{../src/main/java/br/edu/compiladorjava/cli/CompilerCli.java}{CompilerCli.java}, e a entrada da aplicação em \href{../src/main/java/br/edu/compiladorjava/App.java}{App.java}.
+
+\subsection*{Testes}
+
+Os testes de parser cobrem:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item programa válido com declarações, atribuições, condicionais e laços;
+    \item programa inválido com erro sintático de encerramento.
+\end{itemize}
+
+Os testes estão em \href{../src/test/java/br/edu/compiladorjava/parser/ParserTest.java}{ParserTest.java}.
+
+\section{Próximos passos}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Completar a justificativa formal de LL(1) com os conjuntos \texttt{FIRST} e \texttt{FOLLOW} em formato matemático.
+    \item Expandir esta documentação com exemplos de entrada e saída reais do compilador.
+    \item Adicionar seções futuras para AST, análise de contexto e geração de código.
+\end{itemize}
+
+\end{document}

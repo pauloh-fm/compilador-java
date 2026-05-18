@@ -1,6 +1,18 @@
 package br.edu.compiladorjava.lexer;
 
-public class Token {
+public record Token(TokenType type, String lexeme, int line, int column) {
 
-    // TODO: Definir estrutura de token (tipo, lexema, linha e coluna).
+    public Token {
+        if (type == null) {
+            throw new IllegalArgumentException("O tipo do token nao pode ser nulo.");
+        }
+        if (lexeme == null) {
+            throw new IllegalArgumentException("O lexema do token nao pode ser nulo.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return type + "('" + lexeme + "')@" + line + ":" + column;
+    }
 }
