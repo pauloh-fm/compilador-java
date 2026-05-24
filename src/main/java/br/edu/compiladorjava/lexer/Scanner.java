@@ -2,13 +2,18 @@ package br.edu.compiladorjava.lexer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Scanner {
 
     private char currentChar;
-    private StringBuffer currentSpelling;
-    private BufferedReader reader;
 
+    private final BufferedReader reader;
+
+    private StringBuilder currentSpelling;
+
+    // posição atual no arquivo
     private int line = 1;
     private int column = 0;
 
@@ -18,19 +23,25 @@ public class Scanner {
     }
 
     private void nextChar() {
+
         try {
+
             int c = reader.read();
+
             if (c == -1) {
                 currentChar = '\000';
                 return;
             }
+
             currentChar = (char) c;
+
             if (currentChar == '\n') {
                 line++;
                 column = 0;
             } else {
                 column++;
             }
+
         } catch (IOException e) {
             currentChar = '\000';
         }
@@ -57,70 +68,180 @@ public class Scanner {
         return Character.isDigit(c);
     }
 
+    // ignora espaços/comentários
     private void scanSeparator() {
-        while (currentChar == ' ' || currentChar == '\n' || currentChar == '\r' || currentChar == '\t' || currentChar == '!') {
+
+        while (true) {
+
+            // espaços
+            while (currentChar == ' ' ||
+                    currentChar == '\n' ||
+                    currentChar == '\r' ||
+                    currentChar == '\t') {
+
+                skipIt();
+            }
+
+            // comentário
             if (currentChar == '!') {
-                // Pula comentário até o fim da linha
-                while (currentChar != '\n' && currentChar != '\000') {
+
+                while (currentChar != '\n' &&
+                        currentChar != '\000') {
+
                     skipIt();
                 }
+
             } else {
-                skipIt();
+                break;
             }
         }
     }
 
-    private Token scanToken() {
-        // IDENTIFICADOR ou PALAVRA-RESERVADA
+    private Kind scanToken() {
+
+        // IDENTIFICADOR
         if (isLetter(currentChar)) {
+
             takeIt();
-            while (isLetter(currentChar) || isDigit(currentChar))
+
+            while (isLetter(currentChar) ||
+                    isDigit(currentChar)) {
+
                 takeIt();
-            return new Token(Kind.IDENTIFIER, currentSpelling.toString());
+            }
+
+            return Kind.IDENTIFIER;
         }
 
         // NÚMERO
         if (isDigit(currentChar)) {
+
             takeIt();
-            while (isDigit(currentChar))
+
+            while (isDigit(currentChar)) {
                 takeIt();
-            return new Token(Kind.INTLITERAL, currentSpelling.toString());
+            }
+
+            return Kind.INTLITERAL;
         }
 
         switch (currentChar) {
-            case '+': takeIt(); return new Token(Kind.PLUS, null);
-            case '-': takeIt(); return new Token(Kind.MINUS, null);
-            case '*': takeIt(); return new Token(Kind.TIMES, null);
-            case '/': takeIt(); return new Token(Kind.DIVIDE, null);
-            case '<': takeIt(); return new Token(Kind.LT, null);
-            case '>': takeIt(); return new Token(Kind.GT, null);
-            case '=': takeIt(); return new Token(Kind.EQ, null);
-            case ';': takeIt(); return new Token(Kind.SEMICOLON, null);
-            case '.': takeIt(); return new Token(Kind.DOT, null);
-            case ',': takeIt(); return new Token(Kind.COMMA, null);
-            case '(': takeIt(); return new Token(Kind.LPAREN, null);
-            case ')': takeIt(); return new Token(Kind.RPAREN, null);
+
+            case '+':
+                takeIt();
+                return Kind.PLUS;
+
+            case '-':
+                takeIt();
+                return Kind.MINUS;
+
+            case '*':
+                takeIt();
+                return Kind.TIMES;
+
+            case '/':
+                takeIt();
+                return Kind.DIVIDE;
+
+            case '<':
+                takeIt();
+                return Kind.LT;
+
+            case '>':
+                takeIt();
+                return Kind.GT;
+
+            case '=':
+                takeIt();
+                return Kind.EQ;
+
+            case ';':
+                takeIt();
+                return Kind.SEMICOLON;
+
+            case '.':
+                takeIt();
+                return Kind.DOT;
+
+            case ',':
+                takeIt();
+                return Kind.COMMA;
+
+            case '(':
+                takeIt();
+                return Kind.LPAREN;
+
+            case ')':
+                takeIt();
+                return Kind.RPAREN;
 
             case ':':
+
                 takeIt();
+
                 if (currentChar == '=') {
                     takeIt();
-                    return new Token(Kind.BECOMES, null);
+                    return Kind.BECOMES;
                 }
-                return new Token(Kind.COLON, null);
+
+                return Kind.COLON;
 
             case '\000':
-                return new Token(Kind.EOT, null);
+                return Kind.EOT;
 
             default:
-                lexicalError("caractere inválido: " + currentChar);
+                lexicalError(
+                        "caractere inválido: " + currentChar
+                );
                 return null;
         }
     }
 
     public Token scan() {
-        currentSpelling = new StringBuffer();
-        scanSeparator(); // Pula espaços e comentários antes de buscar o token
-        return scanToken();
+        // ignora espaços/comentários
+        scanSeparator();
+
+        // inicia lexema
+        currentSpelling = new StringBuilder();
+
+        // salva posição inicial
+        int tokenLine = line;
+        int tokenColumn = column;
+
+        // reconhece token
+        Kind kind = scanToken();
+
+        // cria token
+        return new Token(
+                kind,
+                currentSpelling.toString(),
+                tokenLine,
+                tokenColumn
+        );
+    }
+
+    public Object[][] scanAllAsMatrix() {
+        List<Token> tokens = new ArrayList<>();
+        Token currentToken;
+
+        // Coleta todos os tokens até o fim do arquivo
+        do {
+            currentToken = scan();
+            tokens.add(currentToken);
+        } while (currentToken.kind != Kind.EOT);
+
+        // Prepara a matriz n x 4
+        Object[][] matrix = new Object[tokens.size()][4];
+
+        // Preenche a matriz com os dados no formato: Tipo | Valor | Linha | Coluna
+        for (int i = 0; i < tokens.size(); i++) {
+            Token t = tokens.get(i);
+            matrix[i][0] = t.getType(); // tipo (int)
+            matrix[i][1] = t.lexeme;    // valor (String)
+            matrix[i][2] = t.line;      // linha (int)
+            matrix[i][3] = t.column;    // coluna (int)
+        }
+
+        return matrix;
     }
 }

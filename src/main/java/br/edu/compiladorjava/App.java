@@ -1,54 +1,50 @@
 package br.edu.compiladorjava;
 
 import br.edu.compiladorjava.lexer.Scanner;
-import br.edu.compiladorjava.lexer.Token;
-import br.edu.compiladorjava.lexer.Kind;
 import br.edu.compiladorjava.lexer.LexerException;
+import br.edu.compiladorjava.parser.Parser;
+import br.edu.compiladorjava.parser.ParserException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
 
-public final class App {
+public class App {
 
-    private static final Logger LOGGER = Logger.getLogger(App.class.getName());
-
-    private App() {
+    public static String startupMessage() {
+        return "Compilador Java UNIVASF - Modo Sintático Direto";
     }
 
     public static void main(String[] args) {
+        String caminhoArquivo = "entrada.txt";
+
         System.out.println(startupMessage());
 
-        // Caminho do arquivo que você quer testar
-        String nomeArquivo = "entrada.txt";
+        // Abre o arquivo apenas UMA vez usando o try-with-resources
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(caminhoArquivo))) {
+            System.out.println("\n=== INICIANDO COMPILAÇÃO: " + caminhoArquivo + " ===");
 
-        // Uso de try-with-resources para fechar o arquivo automaticamente
-        try (BufferedReader reader = new BufferedReader(new FileReader(nomeArquivo))) {
+            // 1. Instancia o Analisador Léxico (Scanner) acoplado ao arquivo
+            Scanner scanner = new Scanner(fileReader);
 
-            Scanner scanner = new Scanner(reader);
-            Token token;
+            // 2. Instancia o Analisador Sintático (Parser) passando o scanner.
+            // O construtor do Parser fará a primeira chamada a scanner.scan() para iniciar o lookahead.
+            Parser parser = new Parser(scanner);
 
-            System.out.println("--- Iniciando Scanner no arquivo: " + nomeArquivo + " ---");
+            // 3. O Parser assume o controle e vai chamando o léxico recursivamente/sequencialmente
+            parser.parse();
 
-            do {
-                token = scanner.scan();
-                // Utiliza o toString() que você implementou na classe Token
-                System.out.println(token);
-            } while (token.kind != Kind.EOT);
-
-            System.out.println("--- Fim da Análise Léxica ---");
+            // Se o método acima terminar sem exceções, o código fonte é válido
+            System.out.println("\n>>> SUCESSO: O programa está sintaticamente correto!");
 
         } catch (LexerException e) {
-            // Erros de caracteres inválidos no código fonte
-            System.err.println(e.getMessage());
-        } catch (Exception e) {
-            // Erros de sistema (arquivo não encontrado, permissão, etc)
-            LOGGER.log(Level.SEVERE, "Erro crítico ao executar o compilador", e);
+            // Captura erros de caracteres inválidos interceptados durante o parsing
+            System.err.println("\n[ERRO LÉXICO] " + e.getMessage());
+        } catch (ParserException e) {
+            // Captura desvios das regras gramaticais da linguagem
+            System.err.println("\n[ERRO SINTÁTICO] " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("\n[ERRO DE LEITURA] Falha ao abrir ou ler o arquivo: " + e.getMessage());
         }
-    }
-
-    public static String startupMessage() {
-        return "Compilador Java UNIVASF";
     }
 }

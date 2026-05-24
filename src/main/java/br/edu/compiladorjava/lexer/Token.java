@@ -3,35 +3,60 @@ package br.edu.compiladorjava.lexer;
 public class Token {
 
     public final Kind kind;
-    public final String lexeme; // só usado para IDENTIFIER e INTLITERAL
+    public final String lexeme;
 
-    public Token(Kind kind, String lexeme) {
+    public final int line;
+    public final int column;
 
-        // 🔥 resolve palavras reservadas automaticamente
+    public Token(Kind kind, String lexeme, int line, int column) {
+
+        // resolve palavras reservadas
         if (kind == Kind.IDENTIFIER) {
+
             Kind reserved = Kind.fromString(lexeme);
+
             if (reserved != null) {
                 this.kind = reserved;
-                this.lexeme = null;
+                this.lexeme = reserved.getSpelling();
+                this.line = line;
+                this.column = column;
                 return;
             }
         }
 
         this.kind = kind;
 
-        // só guarda lexeme se for necessário
-        if (kind == Kind.IDENTIFIER || kind == Kind.INTLITERAL) {
+        if (kind == Kind.EOT) {
+
+            this.lexeme = "<eot>";
+
+        } else if (kind == Kind.IDENTIFIER ||
+                kind == Kind.INTLITERAL) {
+
             this.lexeme = lexeme;
+
         } else {
-            this.lexeme = null;
+
+            this.lexeme = kind.getSpelling();
         }
+
+        this.line = line;
+        this.column = column;
+    }
+
+    public int getType() {
+        return kind.ordinal();
     }
 
     @Override
     public String toString() {
-        if (lexeme != null) {
-            return kind + " -> " + lexeme;
-        }
-        return kind + " -> " + kind.getSpelling();
+
+        return String.format(
+                "%-10d %-20s %-10d %-10d",
+                getType(),
+                lexeme,
+                line,
+                column
+        );
     }
 }

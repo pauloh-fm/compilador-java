@@ -6,46 +6,47 @@ import java.util.Map;
 public enum Kind {
 
     // especiais
-    IDENTIFIER(null),
-    INTLITERAL(null),
+    IDENTIFIER(null), // 0
+    INTLITERAL(null), // 1
 
-    // operadores
-    PLUS("+"),
-    MINUS("-"),
-    TIMES("*"),
-    DIVIDE("/"),
+    // operadores inteiros
+    PLUS("+"),        // 2
+    MINUS("-"),       // 3
+    TIMES("*"),       // 4
+    DIVIDE("/"),      // 5
 
-    LT("<"),
-    GT(">"),
-    EQ("="),
+    // operadores lógicos
+    LT("<"),          // 6
+    GT(">"),          // 7
+    EQ("="),          // 8
 
     // palavras-chave
-    PROGRAM("program"),
-    VAR("var"),
-    INTEGER("integer"),
-    BOOLEAN("boolean"),
-    BEGIN("begin"),
-    END("end"),
-    IF("if"),
-    THEN("then"),
-    ELSE("else"),
-    WHILE("while"),
-    DO("do"),
-    TRUE("true"),
-    FALSE("false"),
-    OR("or"),
-    AND("and"),
+    PROGRAM("program"), // 9
+    VAR("var"),         // 10
+    INTEGER("integer"), // 11
+    BOOLEAN("boolean"), // 12
+    BEGIN("begin"),     // 13
+    END("end"),         // 14
+    IF("if"),           // 15
+    THEN("then"),       // 16
+    ELSE("else"),       // 17
+    WHILE("while"),     // 18
+    DO("do"),           // 19
+    TRUE("true"),       // 20
+    FALSE("false"),     // 21
+    OR("or"),           // 22
+    AND("and"),         // 23
 
     // símbolos
-    SEMICOLON(";"),
-    COLON(":"),
-    BECOMES(":="),
-    DOT("."),
-    COMMA(","),
-    LPAREN("("),
-    RPAREN(")"),
+    SEMICOLON(";"),     // 24
+    COLON(":"),         // 25
+    BECOMES(":="),      // 26
+    DOT("."),           // 27
+    COMMA(","),         // 28
+    LPAREN("("),        // 29
+    RPAREN(")"),        // 30
 
-    EOT(null);
+    EOT(null);          // 31
 
     private final String spelling;
 
@@ -57,7 +58,6 @@ public enum Kind {
         return spelling;
     }
 
-    // 🔥 mapa para lookup rápido (sem switch gigante)
     private static final Map<String, Kind> keywords = new HashMap<>();
 
     static {

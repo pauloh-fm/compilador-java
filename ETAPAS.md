@@ -4,16 +4,16 @@ Este arquivo organiza as atividades do trabalho com base na gramática em `lingu
 
 ## Etapa 1 - Análise Léxica
 
-- [ ] Criar, a partir da gramática fornecida, uma relação dos tokens da linguagem.
+- [x] Criar, a partir da gramática fornecida, uma relação dos tokens da linguagem.
 - [ ] Obter uma gramática léxica para este conjunto.
 - [ ] Obter uma expressão regular para este conjunto.
-- [ ] Implementar o analisador léxico conforme o modelo do livro.
+- [x] Implementar o analisador léxico conforme o modelo do livro.
 - [ ] Testar e documentar o analisador léxico.
 
 ## Etapa 2 - Análise Sintática
 
 - [ ] Verificar se a gramática da linguagem é LL(1) e justificar a resposta.
-- [ ] Obter uma gramática equivalente que seja LL(1).
+- [x] Obter uma gramática equivalente que seja LL(1).
 - [ ] Demonstrar, por meio dos conjuntos `first` e `follow`, que a nova gramática é LL(1).
 - [ ] Obter, a partir da nova gramática, uma gramática sintática para a linguagem.
 - [ ] Implementar, por método recursivo descendente, um analisador léxico para a linguagem.
