@@ -1,4 +1,6 @@
 package br.edu.compiladorjava.ast;
+
+import br.edu.compiladorjava.ast.*;
 import br.edu.compiladorjava.visitor.Visitor;
 
 public class AstPrinter implements Visitor {
@@ -11,31 +13,22 @@ public class AstPrinter implements Visitor {
         }
     }
 
-    public void print(ProgramNode p) {
-
-        System.out.println("\n---> Iniciando impressao da arvore\n");
-
-        p.visit(this);
+    public void print(ProgramNode program) {
+        program.visit(this);
     }
 
     @Override
     public void visitProgramNode(ProgramNode p) {
 
-        if (p == null) {
-            return;
-        }
-
         System.out.println("PROGRAM");
 
         level++;
 
-        if (p.declarations != null) {
+        if (p.declarations != null)
             p.declarations.visit(this);
-        }
 
-        if (p.commands != null) {
+        if (p.commands != null)
             p.commands.visit(this);
-        }
 
         level--;
     }
@@ -43,38 +36,28 @@ public class AstPrinter implements Visitor {
     @Override
     public void visitDeclarationNode(DeclarationNode d) {
 
-        if (d == null) {
-            return;
-        }
+        DeclarationNode current = d;
 
-        indent();
-        System.out.println("DECL " + d.name);
+        while (current != null) {
 
-        if (d.next != null) {
-            d.next.visit(this);
+            indent();
+            System.out.println(
+                    "DECL " + current.name + " : " + current.type);
+
+            current = current.next;
         }
     }
 
     @Override
-    public void visitAssignmentNode(AssignmentNode c) {
-
-        if (c == null) {
-            return;
-        }
-
-        indent();
-        System.out.println("ASSIGN " + c.variable);
-
-        level++;
-
-        if (c.expression != null) {
-            c.expression.visit(this);
-        }
-
-        level--;
-
-        if (c.next != null) {
-            c.next.visit(this);
+    public void visitAssignmentNode(AssignmentNode a) {
+        AssignmentNode current = a;
+        while (current != null) {
+            indent();
+            System.out.println("ASSIGN " + current.variable);
+            level++;
+            current.expression.visit(this);
+            level--;
+            current = (AssignmentNode) current.next;
         }
     }
 
@@ -93,9 +76,16 @@ public class AstPrinter implements Visitor {
     }
 
     @Override
-    public void visitIdentifierNode(IdentifierNode e) {
+    public void visitIdentifierNode(IdentifierNode i) {
 
         indent();
-        System.out.println(e.name);
+        System.out.println(i.name);
+    }
+
+    @Override
+    public void visitLiteralNode(LiteralNode l) {
+
+        indent();
+        System.out.println(l.value);
     }
 }

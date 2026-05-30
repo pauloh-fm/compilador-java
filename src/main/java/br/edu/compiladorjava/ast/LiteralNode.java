@@ -1,6 +1,17 @@
 package br.edu.compiladorjava.ast;
 
-public class LiteralNode extends AstNode {
+import br.edu.compiladorjava.visitor.Visitor;
 
-    // TODO: Definir no para literais.
+public class LiteralNode extends ExpressionNode {
+
+    public String value;
+
+    public LiteralNode(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public void visit(Visitor v) {
+        v.visitLiteralNode(this);
+    }
 }

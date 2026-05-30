@@ -1,9 +1,8 @@
 package br.edu.compiladorjava;
 
-import br.edu.compiladorjava.lexer.Scanner;
-import br.edu.compiladorjava.lexer.LexerException;
-import br.edu.compiladorjava.parser.Parser;
-import br.edu.compiladorjava.parser.ParserException;
+import br.edu.compiladorjava.ast.*;
+import br.edu.compiladorjava.lexer.*;
+import br.edu.compiladorjava.parser.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,7 +31,10 @@ public class App {
             Parser parser = new Parser(scanner);
 
             // 3. O Parser assume o controle e vai chamando o léxico recursivamente/sequencialmente
-            parser.parse();
+            ProgramNode ast = parser.parse();
+
+            AstPrinter printer = new AstPrinter();
+            printer.print(ast);
 
             // Se o método acima terminar sem exceções, o código fonte é válido
             System.out.println("\n>>> SUCESSO: O programa está sintaticamente correto!");

@@ -1,14 +1,11 @@
 package br.edu.compiladorjava.parser;
 
-import br.edu.compiladorjava.lexer.Kind;
-import br.edu.compiladorjava.lexer.Scanner;
-import br.edu.compiladorjava.lexer.Token;
+import br.edu.compiladorjava.ast.*;
+import br.edu.compiladorjava.lexer.*;
 
 public class Parser {
-
     private final Scanner scanner;
     private Token currentToken;
-
     public Parser(Scanner scanner) {
         this.scanner = scanner;
         this.currentToken = scanner.scan(); // Inicializa o lookahead
@@ -30,19 +27,26 @@ public class Parser {
     }
 
     // <programa> ::= program <id> ; <corpo> .
-    public void parse() {
-        parsePrograma();
+    public ProgramNode parse() {
+        ProgramNode program = parsePrograma();
         if (currentToken.kind != Kind.EOT) {
-            throw new ParserException("Tokens inesperados no final do arquivo.", currentToken);
+            throw new ParserException(
+                    "Tokens inesperados no final do arquivo.",
+                    currentToken
+            );
         }
+        return program;
     }
 
-    private void parsePrograma() {
+    private ProgramNode parsePrograma() {
+        ProgramNode p = new ProgramNode();
         accept(Kind.PROGRAM);
         accept(Kind.IDENTIFIER);
         accept(Kind.SEMICOLON);
-        parseCorpo();
+        p.declarations = parseDeclaracoes();
+        p.commands = parseComandoComposto();
         accept(Kind.DOT);
+        return p;
     }
 
     // <corpo> ::= <declarações> <comando-composto>
@@ -52,20 +56,31 @@ public class Parser {
     }
 
     // <declarações> ::= <declaração> ; <declarações> | <vazio>
-    private void parseDeclaracoes() {
-        // FIRST(<declaração>) = { var }
+    private DeclarationNode parseDeclaracoes() {
+        DeclarationNode first = null;
+        DeclarationNode last = null;
         while (currentToken.kind == Kind.VAR) {
-            parseDeclaracao();
+            DeclarationNode d = parseDeclaracao();
+            if (first == null) {
+                first = d;
+            } else {
+                last.next = d;
+            }
+            last = d;
             accept(Kind.SEMICOLON);
         }
+        return first;
     }
 
     // <declaração> ::= var <id> : <tipo>
-    private void parseDeclaracao() {
+    private DeclarationNode parseDeclaracao() {
         accept(Kind.VAR);
+        String nome = currentToken.lexeme;
         accept(Kind.IDENTIFIER);
         accept(Kind.COLON);
+        String tipo = currentToken.lexeme;
         parseTipo();
+        return new DeclarationNode(nome, tipo);
     }
 
     // <tipo> ::= integer | boolean
@@ -78,18 +93,38 @@ public class Parser {
     }
 
     // <comando-composto> ::= begin <lista-de-comandos> end
-    private void parseComandoComposto() {
+    private CommandNode parseComandoComposto() {
         accept(Kind.BEGIN);
-        parseListaDeComandos();
+        CommandNode cmds = parseListaDeComandos();
         accept(Kind.END);
+        return cmds;
     }
 
     // <lista-de-comandos> ::= <comando> ; <lista-de-comandos> | <vazio>
-    private void parseListaDeComandos() {
+    private CommandNode parseListaDeComandos() {
+
+        CommandNode first = null;
+        CommandNode last = null;
+
         while (isComandoStart()) {
-            parseComando();
+
+            CommandNode cmd = parseComando();
+
+            if (cmd != null) {
+
+                if (first == null) {
+                    first = cmd;
+                } else {
+                    last.next = cmd;
+                }
+
+                last = cmd;
+            }
+
             accept(Kind.SEMICOLON);
         }
+
+        return first;
     }
 
     private boolean isComandoStart() {
@@ -100,30 +135,33 @@ public class Parser {
     }
 
     // <comando> ::= <atribuição> | <condicional> | <iterativo> | <comando-composto>
-    private void parseComando() {
+    private CommandNode parseComando() {
         switch (currentToken.kind) {
             case IDENTIFIER:
-                parseAtribuicao();
-                break;
+                return parseAtribuicao();
             case IF:
                 parseCondicional();
-                break;
+                return null;
             case WHILE:
                 parseIterativo();
-                break;
+                return null;
             case BEGIN:
-                parseComandoComposto();
-                break;
+                return parseComandoComposto();
             default:
-                throw new ParserException("Comando inválido esperado", currentToken);
+                throw new ParserException(
+                        "Comando inválido esperado",
+                        currentToken
+                );
         }
     }
 
     // <atribuição> ::= <variável> := <expressão>
-    private void parseAtribuicao() {
-        accept(Kind.IDENTIFIER); // <variável>
-        accept(Kind.BECOMES);    // :=
-        parseExpressao();
+    private AssignmentNode parseAtribuicao() {
+        String nome = currentToken.lexeme;
+        accept(Kind.IDENTIFIER);
+        accept(Kind.BECOMES);
+        ExpressionNode expr = parseExpressao();
+        return new AssignmentNode(nome, expr);
     }
 
     // <condicional> ::= if <expressão> then <comando> ( else <comando> | <vazio> )
@@ -147,12 +185,15 @@ public class Parser {
     }
 
     // <expressão> ::= <expressão-simples> ( <op-rel> <expressão-simples> | <vazio> )
-    private void parseExpressao() {
-        parseExpressaoSimples();
+    private ExpressionNode parseExpressao() {
+        ExpressionNode left = parseExpressaoSimples();
         if (isOpRel()) {
-            acceptIt(); // consome <, >, =
-            parseExpressaoSimples();
+            String op = currentToken.lexeme;
+            acceptIt();
+            ExpressionNode right = parseExpressaoSimples();
+            return new BinaryExpressionNode(op, left, right);
         }
+        return left;
     }
 
     private boolean isOpRel() {
@@ -162,12 +203,20 @@ public class Parser {
     }
 
     // <expressão-simples> ::= <termo> ( <op-ad> <termo> )*
-    private void parseExpressaoSimples() {
-        parseTermo();
-        while (isOpAd()) {
-            acceptIt(); // consome +, -, or
-            parseTermo();
+    private ExpressionNode parseExpressaoSimples() {
+        ExpressionNode left = parseTermo();
+        while (currentToken.kind == Kind.PLUS
+                || currentToken.kind == Kind.MINUS
+                || currentToken.kind == Kind.OR) {
+            String op = currentToken.lexeme;
+            acceptIt();
+            ExpressionNode right = parseTermo();
+            left = new BinaryExpressionNode(
+                    op,
+                    left,
+                    right);
         }
+        return left;
     }
 
     private boolean isOpAd() {
@@ -177,12 +226,21 @@ public class Parser {
     }
 
     // <termo> ::= <fator> ( <op-mul> <fator> )*
-    private void parseTermo() {
-        parseFator();
-        while (isOpMul()) {
-            acceptIt(); // consome *, /, and
-            parseFator();
+    private ExpressionNode parseTermo() {
+        ExpressionNode left = parseFator();
+        while (currentToken.kind == Kind.TIMES
+                || currentToken.kind == Kind.DIVIDE
+                || currentToken.kind == Kind.AND) {
+            String op = currentToken.lexeme;
+            acceptIt();
+            ExpressionNode right = parseFator();
+            left = new BinaryExpressionNode(
+                    op,
+                    left,
+                    right);
         }
+
+        return left;
     }
 
     private boolean isOpMul() {
@@ -192,19 +250,32 @@ public class Parser {
     }
 
     // <fator> ::= <variável> | <literal> | "(" <expressão> ")"
-    private void parseFator() {
+    private ExpressionNode parseFator() {
         if (currentToken.kind == Kind.IDENTIFIER) {
+            String nome = currentToken.lexeme;
             acceptIt();
-        } else if (currentToken.kind == Kind.INTLITERAL) {
-            acceptIt();
-        } else if (currentToken.kind == Kind.TRUE || currentToken.kind == Kind.FALSE) {
-            acceptIt();
-        } else if (currentToken.kind == Kind.LPAREN) {
-            acceptIt();
-            parseExpressao();
-            accept(Kind.RPAREN);
-        } else {
-            throw new ParserException("Fator inválido. Era esperado um Identificador, Número, Booleano ou Expressão entre parênteses.", currentToken);
+            return new IdentifierNode(nome);
         }
+        if (currentToken.kind == Kind.INTLITERAL) {
+            String valor = currentToken.lexeme;
+            acceptIt();
+            return new LiteralNode(valor);
+        }
+        if (currentToken.kind == Kind.TRUE ||
+                currentToken.kind == Kind.FALSE) {
+            String valor = currentToken.lexeme;
+            acceptIt();
+            return new LiteralNode(valor);
+        }
+        if (currentToken.kind == Kind.LPAREN) {
+            acceptIt();
+            ExpressionNode expr = parseExpressao();
+            accept(Kind.RPAREN);
+            return expr;
+        }
+        throw new ParserException(
+                "Fator inválido.",
+                currentToken
+        );
     }
 }
