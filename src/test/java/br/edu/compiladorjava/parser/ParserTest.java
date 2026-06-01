@@ -34,4 +34,29 @@ class ParserTest {
 
         assertThrows(ParserException.class, () -> new Parser(new Lexer(source).tokenize()).parse());
     }
+
+    @Test
+    void parseComplexProgramWithArithmeticConditionalAndLoopShouldSucceed() {
+        String source = """
+                program exemplo;
+                var x : integer;
+                var y : integer;
+                var flag : boolean;
+                begin
+                    x := 10;
+                    y := 5;
+                    x := x + y * 2;
+                    if x > y then
+                        flag := true
+                    else
+                        flag := false;
+                    while x > 0 do
+                    begin
+                        x := x - 1;
+                    end;
+                end.
+                """;
+
+        assertDoesNotThrow(() -> new Parser(new Lexer(source).tokenize()).parse());
+    }
 }
