@@ -3,6 +3,7 @@ package br.edu.compiladorjava;
 import br.edu.compiladorjava.ast.*;
 import br.edu.compiladorjava.lexer.*;
 import br.edu.compiladorjava.parser.*;
+import br.edu.compiladorjava.semantic.ContextAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -37,7 +38,14 @@ public class App {
             printer.print(ast);
 
             // Se o método acima terminar sem exceções, o código fonte é válido
-            System.out.println("\n>>> SUCESSO: O programa está sintaticamente correto!");
+            System.out.println("\n>>> SUCESSO: O programa está sintaticamente correto!\n" +
+                    "==============================================================");
+
+            // 4. Analisador de contexto
+            ContextAnalyzer analyzer = new ContextAnalyzer();
+            analyzer.analyze(ast);
+
+            System.out.println("\n>>> SUCESSO: Análise semântica concluída sem erros de contexto.");
 
         } catch (LexerException e) {
             // Captura erros de caracteres inválidos interceptados durante o parsing

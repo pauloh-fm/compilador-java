@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Scanner {
-
     private char currentChar;
-
     private final BufferedReader reader;
-
     private StringBuilder currentSpelling;
 
     // posição atual no arquivo
@@ -23,26 +20,21 @@ public class Scanner {
     }
 
     private void nextChar() {
-
         try {
-
             int c = reader.read();
-
             if (c == -1) {
                 currentChar = '\000';
                 return;
             }
-
             currentChar = (char) c;
-
             if (currentChar == '\n') {
                 line++;
                 column = 0;
             } else {
                 column++;
             }
-
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             currentChar = '\000';
         }
     }
@@ -70,27 +62,17 @@ public class Scanner {
 
     // ignora espaços/comentários
     private void scanSeparator() {
-
         while (true) {
-
             // espaços
-            while (currentChar == ' ' ||
-                    currentChar == '\n' ||
-                    currentChar == '\r' ||
-                    currentChar == '\t') {
-
+            while (currentChar == ' ' || currentChar == '\n' ||
+                    currentChar == '\r' || currentChar == '\t') {
                 skipIt();
             }
-
             // comentário
             if (currentChar == '!') {
-
-                while (currentChar != '\n' &&
-                        currentChar != '\000') {
-
+                while (currentChar != '\n' && currentChar != '\000') {
                     skipIt();
                 }
-
             } else {
                 break;
             }
@@ -101,32 +83,23 @@ public class Scanner {
 
         // IDENTIFICADOR
         if (isLetter(currentChar)) {
-
             takeIt();
-
-            while (isLetter(currentChar) ||
-                    isDigit(currentChar)) {
-
+            while (isLetter(currentChar) || isDigit(currentChar)) {
                 takeIt();
             }
-
             return Kind.IDENTIFIER;
         }
 
         // NÚMERO
         if (isDigit(currentChar)) {
-
             takeIt();
-
             while (isDigit(currentChar)) {
                 takeIt();
             }
-
             return Kind.INTLITERAL;
         }
 
         switch (currentChar) {
-
             case '+':
                 takeIt();
                 return Kind.PLUS;
@@ -176,14 +149,11 @@ public class Scanner {
                 return Kind.RPAREN;
 
             case ':':
-
                 takeIt();
-
                 if (currentChar == '=') {
                     takeIt();
                     return Kind.BECOMES;
                 }
-
                 return Kind.COLON;
 
             case '\000':
@@ -212,12 +182,8 @@ public class Scanner {
         Kind kind = scanToken();
 
         // cria token
-        return new Token(
-                kind,
-                currentSpelling.toString(),
-                tokenLine,
-                tokenColumn
-        );
+        return new Token(kind, currentSpelling.toString(),
+                tokenLine, tokenColumn);
     }
 
     public Object[][] scanAllAsMatrix() {

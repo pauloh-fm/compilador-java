@@ -6,7 +6,6 @@ var y : integer;
 var flag : boolean;
 
 begin
-
     ! Inicialização
     x := 10;
     y := 5;
