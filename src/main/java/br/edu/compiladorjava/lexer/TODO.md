@@ -1,6 +1,6 @@
 # TODO local - lexer
 
-- [ ] Criar `TokenType` com todos os tokens.
-- [ ] Criar `Token` com lexema, linha e coluna.
-- [ ] Criar `Lexer` para varrer o codigo-fonte.
-- [ ] Criar `LexerException` para erros lexicos.
+- [x] Criar `TokenType` com todos os tokens.
+- [x] Criar `Token` com lexema, linha e coluna.
+- [x] Criar `Lexer` para varrer o codigo-fonte.
+- [x] Criar `LexerException` para erros lexicos.

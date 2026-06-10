@@ -26,6 +26,11 @@ public class App {
 
             // 1. Instancia o Analisador Léxico (Scanner) acoplado ao arquivo
             Scanner scanner = new Scanner(fileReader);
+//            Token token;
+//            do {
+//                token = scanner.scan();
+//                System.out.println(token);
+//            } while (token.kind != Kind.EOT);
 
             // 2. Instancia o Analisador Sintático (Parser) passando o scanner.
             // O construtor do Parser fará a primeira chamada a scanner.scan() para iniciar o lookahead.

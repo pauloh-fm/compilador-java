@@ -80,7 +80,6 @@ public class Scanner {
     }
 
     private Kind scanToken() {
-
         // IDENTIFICADOR
         if (isLetter(currentChar)) {
             takeIt();

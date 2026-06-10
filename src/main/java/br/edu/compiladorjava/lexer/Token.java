@@ -7,7 +7,6 @@ public class Token {
     public final int column;
 
     public Token(Kind kind, String lexeme, int line, int column) {
-
         // resolve palavras reservadas
         if (kind == Kind.IDENTIFIER) {
             Kind reserved = Kind.fromString(lexeme);
