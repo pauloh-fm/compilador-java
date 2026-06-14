@@ -1,13 +1,15 @@
 package br.edu.compiladorjava;
 
 import br.edu.compiladorjava.ast.*;
+import br.edu.compiladorjava.codegen.*;
 import br.edu.compiladorjava.lexer.*;
 import br.edu.compiladorjava.parser.*;
-import br.edu.compiladorjava.semantic.ContextAnalyzer;
+import br.edu.compiladorjava.semantic.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -18,7 +20,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-
         Scanner teclado = new Scanner(System.in);
 
         System.out.println("""
@@ -26,28 +27,20 @@ public class App {
                 2 - Léxico + Sintático
                 3 - Léxico + Sintático + AST
                 4 - Léxico + Sintático + AST + Contexto
+                5 - Léxico + Sintático + AST + Contexto + Código
                 """);
-
         System.out.print("Escolha uma opção: ");
         int opcao = teclado.nextInt();
 
         try {
-
             // ==================================================
             // ETAPA 1 - LÉXICO
             // ==================================================
             if (opcao >= 1) {
-
                 System.out.println("\n=== ANÁLISE LÉXICA ===");
-
-                try (BufferedReader br =
-                             new BufferedReader(new FileReader(ARQUIVO))) {
-
-                    br.edu.compiladorjava.lexer.Scanner scanner =
-                            new br.edu.compiladorjava.lexer.Scanner(br);
-
+                try (BufferedReader br = new BufferedReader(new FileReader(ARQUIVO))) {
+                    br.edu.compiladorjava.lexer.Scanner scanner = new br.edu.compiladorjava.lexer.Scanner(br);
                     Token token;
-
                     do {
                         token = scanner.scan();
                         System.out.println(token);
@@ -65,18 +58,11 @@ public class App {
             // ==================================================
             ProgramNode ast;
 
-            try (BufferedReader br =
-                         new BufferedReader(new FileReader(ARQUIVO))) {
-
-                br.edu.compiladorjava.lexer.Scanner scanner =
-                        new br.edu.compiladorjava.lexer.Scanner(br);
-
+            try (BufferedReader br = new BufferedReader(new FileReader(ARQUIVO))) {
+                br.edu.compiladorjava.lexer.Scanner scanner = new br.edu.compiladorjava.lexer.Scanner(br);
                 Parser parser = new Parser(scanner);
-
                 ast = parser.parse();
-
-                System.out.println(
-                        "\n>>> SUCESSO: Programa sintaticamente correto!");
+                System.out.println("\n>>> SUCESSO: Programa sintaticamente correto!");
             }
 
             if (opcao == 2) {
@@ -87,12 +73,9 @@ public class App {
             // ETAPA 3 - AST
             // ==================================================
             if (opcao >= 3) {
-
                 System.out.println("\n=== AST ===");
-
                 AstPrinter printer = new AstPrinter();
                 printer.print(ast);
-
                 if (opcao == 3) {
                     return;
                 }
@@ -102,9 +85,7 @@ public class App {
             // ETAPA 4 - CONTEXTO
             // ==================================================
             if (opcao >= 4) {
-
                 System.out.println("\n=== ANÁLISE DE CONTEXTO ===");
-
                 ContextAnalyzer analyzer = new ContextAnalyzer();
                 analyzer.analyze(ast);
 
@@ -112,16 +93,22 @@ public class App {
                         "\n>>> SUCESSO: Análise semântica concluída.");
             }
 
+            // ==================================================
+            // ETAPA 5 - CÓDIGO
+            // ==================================================
+            if (opcao >= 5) {
+                CodeGenerator generator = new CodeGenerator();
+                generator.generate(ast);
+                generator.saveToFile("saida.txt");
+                System.out.println("\n=== GERAÇÃO DE CÓDIGO ===");
+                System.out.println("\n>>> SUCESSO: Código salvo na raíz do projeto \"saida.txt\"");
+            }
+
         } catch (LexerException e) {
-
             System.err.println("[ERRO LÉXICO] " + e.getMessage());
-
         } catch (ParserException e) {
-
             System.err.println("[ERRO SINTÁTICO] " + e.getMessage());
-
         } catch (IOException e) {
-
             System.err.println("[ERRO DE LEITURA] " + e.getMessage());
         }
     }
