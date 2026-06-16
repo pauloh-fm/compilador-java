@@ -1,0 +1,13 @@
+program calculadora;
+var x : integer;
+var y : integer;
+var resultado : integer;
+begin
+  x := 10;
+  y := 5;
+  resultado := x + y;
+  if resultado > 10 then
+    resultado := resultado * 2;
+  else
+    resultado := resultado + 1;
+end

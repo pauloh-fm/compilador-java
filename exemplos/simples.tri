@@ -1,0 +1,11 @@
+program exemplo;
+var x : integer;
+var y : integer;
+begin
+  x := 10;
+  y := 5;
+  if x > y then
+    x := 1
+  else
+    x := 0;
+end
