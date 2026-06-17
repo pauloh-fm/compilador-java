@@ -35,23 +35,23 @@ Este arquivo organiza as atividades do trabalho com base na gramática em `lingu
 
 - [ ] Descrever, em detalhes e com exemplos, todas as dependências de contexto da linguagem.
 - [ ] Definir e documentar casos omissos da linguagem.
-- [ ] Implementar o analisador de contexto.
+- [x] Implementar o analisador de contexto.
 - [ ] Implementar a tabela de símbolos.
-- [ ] Implementar os métodos de identificação e verificação de tipos.
-- [ ] Observar as regras de escopo e as regras de tipo da linguagem.
-- [ ] Utilizar o padrão de projeto Visitor.
-- [ ] Emitir mensagens de erro quando as dependências de contexto forem violadas.
+- [x] Implementar os métodos de identificação e verificação de tipos.
+- [x] Observar as regras de escopo e as regras de tipo da linguagem.
+- [x] Utilizar o padrão de projeto Visitor.
+- [x] Emitir mensagens de erro quando as dependências de contexto forem violadas.
 
 ## Etapa 5 - Geração de Código
 
 - [ ] Implementar a geração de código para todos os comandos, funções e procedimentos da linguagem.
 - [ ] Usar os padrões de código apropriados.
 - [ ] Implementar e utilizar um gerador de rótulos.
-- [ ] Criar um arquivo TXT contendo as instruções da máquina-objeto.
-- [ ] Referenciar variáveis pelos seus nomes.
-- [ ] Usar a máquina TAM, definida no livro-texto, como máquina-objeto.
-- [ ] Considerar o modelo de máquina de pilha.
-- [ ] Utilizar o padrão de projeto Visitor.
+- [x] Criar um arquivo TXT contendo as instruções da máquina-objeto.
+- [x] Referenciar variáveis pelos seus nomes.
+- [x] Usar a máquina TAM, definida no livro-texto, como máquina-objeto.
+- [x] Considerar o modelo de máquina de pilha.
+- [x] Utilizar o padrão de projeto Visitor.
 
 ## Itens opcionais
 
