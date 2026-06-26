@@ -1,6 +1,6 @@
 # TODO local - ast
 
-- [ ] Criar classe base `AstNode`.
-- [ ] Criar nos de declaracao, comando e expressao.
-- [ ] Criar interface `AstVisitor`.
-- [ ] Criar visitor de impressao/visualizacao.
+- [x] Criar classe base `AstNode`.
+- [x] Criar nos de declaracao, comando e expressao.
+- [x] Criar interface `AstVisitor`.
+- [x] Criar visitor de impressao/visualizacao.

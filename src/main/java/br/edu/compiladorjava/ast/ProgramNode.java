@@ -1,6 +1,13 @@
 package br.edu.compiladorjava.ast;
 
-public class ProgramNode extends AstNode {
+import br.edu.compiladorjava.visitor.Visitor;
 
-    // TODO: Definir no raiz do programa.
+public class ProgramNode extends AstNode {
+    public DeclarationNode declarations;
+    public CommandNode commands;
+
+    @Override
+    public void visit(Visitor v) {
+        v.visitProgramNode(this);
+    }
 }

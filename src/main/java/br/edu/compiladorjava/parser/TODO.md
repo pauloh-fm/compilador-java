@@ -1,6 +1,6 @@
 # TODO local - parser
 
-- [ ] Criar `Parser` recursivo descendente.
-- [ ] Criar metodos por nao-terminal da gramatica.
-- [ ] Integrar consumo de tokens com o lexer.
-- [ ] Criar `ParserException` para erros sintaticos.
+- [x] Criar `Parser` recursivo descendente.
+- [x] Criar metodos por nao-terminal da gramatica.
+- [x] Integrar consumo de tokens com o lexer.
+- [x] Criar `ParserException` para erros sintaticos.

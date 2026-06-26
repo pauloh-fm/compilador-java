@@ -1,6 +1,6 @@
 # TODO local - codegen
 
-- [ ] Criar modelo de instrucao TAM.
-- [ ] Criar `LabelGenerator`.
-- [ ] Criar `CodeGenerator` via Visitor.
-- [ ] Salvar codigo objeto em arquivo TXT.
+- [x] Criar modelo de instrucao TAM.
+- [x] Criar `LabelGenerator`.
+- [x] Criar `CodeGenerator` via Visitor.
+- [x] Salvar codigo objeto em arquivo TXT.

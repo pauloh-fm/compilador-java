@@ -1,6 +1,6 @@
 # TODO local - semantic
 
-- [ ] Criar `SymbolTable` com escopos aninhados.
-- [ ] Criar `ContextAnalyzer` via Visitor.
-- [ ] Criar verificacao de tipos.
-- [ ] Criar mensagens de erro semantico claras.
+- [x] Criar `SymbolTable` com escopos aninhados.
+- [x] Criar `ContextAnalyzer` via Visitor.
+- [x] Criar verificacao de tipos.
+- [x] Criar mensagens de erro semantico claras.

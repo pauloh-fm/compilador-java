@@ -1,0 +1,63 @@
+=== PROGRAMA ===
+<programa> ::= program <id> ; <corpo> .
+
+=== CORPO ===
+<corpo> ::= <declarações> <comando-composto>
+
+=== DECLARAÇÕES ===
+<declarações> ::= { <declaração> ; }
+<declaração> ::= <declaração-de-variável>
+<declaração-de-variável> ::= var <id> : <tipo>
+
+=== TIPOS ===
+<tipo> ::= integer | boolean
+
+=== COMANDOS ===
+<comando> ::=
+      <atribuição>
+    | <condicional>
+    | <iterativo>
+    | <comando-composto>
+<comando-composto> ::= begin <lista-de-comandos> end
+<lista-de-comandos> ::= { <comando> ; }
+
+=== ATRIBUIÇÃO ===
+<atribuição> ::= <variável> := <expressão>
+
+=== CONDICIONAL ===
+<condicional> ::=
+      if <expressão> then <comando> [ else <comando> ]
+
+=== ITERATIVO ===
+<iterativo> ::=
+      while <expressão> do <comando>
+
+=== EXPRESSÕES ==
+<expressão> ::=
+      <expressão-simples>
+    | <expressão-simples> <op-rel> <expressão-simples>
+<expressão-simples> ::=
+      <termo> { <op-ad> <termo> }
+<termo> ::=
+      <fator> { <op-mul> <fator> }
+<fator> ::=
+      <variável>
+    | <literal>
+    | ( <expressão> )
+
+=== LITERAIS ===
+<literal> ::= <int-lit> | <bool-lit>
+<bool-lit> ::= true | false
+<int-lit> ::= <digito> { <digito> }
+
+=== IDENTIFICADORES ===
+<id> ::= <letra> { <letra> | <digito> }
+
+=== OPERADORES ===
+<op-ad> ::= + | - | or
+<op-mul> ::= * | / | and
+<op-rel> ::= < | > | =
+
+=== LÉXICO ===
+<letra> ::= a | ... | z
+<digito> ::= 0 | ... | 9

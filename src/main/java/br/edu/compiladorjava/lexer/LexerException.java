@@ -2,11 +2,12 @@ package br.edu.compiladorjava.lexer;
 
 public class LexerException extends RuntimeException {
 
-    public LexerException(String message) {
-        super(message);
-    }
+    private final int line;
+    private final int column;
 
-    public LexerException(int line, int column, String message) {
-        super("Erro lexico na linha " + line + ", coluna " + column + ": " + message);
+    public LexerException(String message, int line, int column) {
+        super("Erro léxico (" + line + ", " + column + "): " + message);
+        this.line = line;
+        this.column = column;
     }
 }

@@ -1,6 +1,10 @@
 package br.edu.compiladorjava.ast;
 
-public class AstNode {
+import br.edu.compiladorjava.visitor.Visitor;
 
-    // TODO: Definir classe base da AST.
+public abstract class AstNode {
+    public int line;
+    public int column;
+
+    public abstract void visit(Visitor v);
 }
