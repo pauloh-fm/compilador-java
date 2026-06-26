@@ -131,11 +131,9 @@ public class Parser {
             case IDENTIFIER:
                 return parseAtribuicao();
             case IF:
-                parseCondicional();
-                return null;
+                return parseCondicional();
             case WHILE:
-                parseIterativo();
-                return null;
+                return parseIterativo();
             case BEGIN:
                 return parseComandoComposto();
             default:
@@ -156,23 +154,30 @@ public class Parser {
     }
 
     // <condicional> ::= if <expressão> then <comando> ( else <comando> | <vazio> )
-    private void parseCondicional() {
+    private IfNode parseCondicional() {
+        int line = currentToken.line;
+        int column = currentToken.column;
         accept(Kind.IF);
-        parseExpressao();
+        ExpressionNode cond = parseExpressao();
         accept(Kind.THEN);
-        parseComando();
+        CommandNode thenBranch = parseComando();
+        CommandNode elseBranch = null;
         if (currentToken.kind == Kind.ELSE) {
             acceptIt();
-            parseComando();
+            elseBranch = parseComando();
         }
+        return new IfNode(cond, thenBranch, elseBranch, line, column);
     }
 
     // <iterativo> ::= while <expressão> do <comando>
-    private void parseIterativo() {
+    private WhileNode parseIterativo() {
+        int line = currentToken.line;
+        int column = currentToken.column;
         accept(Kind.WHILE);
-        parseExpressao();
+        ExpressionNode cond = parseExpressao();
         accept(Kind.DO);
-        parseComando();
+        CommandNode body = parseComando();
+        return new WhileNode(cond, body, line, column);
     }
 
     // <expressão> ::= <expressão-simples> ( <op-rel> <expressão-simples> | <vazio> )

@@ -15,4 +15,8 @@ public interface Visitor {
     void visitIdentifierNode(IdentifierNode i);
 
     void visitLiteralNode(LiteralNode l);
+
+    void visitIfNode(IfNode node);
+
+    void visitWhileNode(WhileNode node);
 }

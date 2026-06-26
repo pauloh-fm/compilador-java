@@ -40,15 +40,63 @@ public class AstPrinter implements Visitor {
 
     @Override
     public void visitAssignmentNode(AssignmentNode a) {
-        AssignmentNode current = a;
-        while (current != null) {
-            indent();
-            System.out.println("ASSIGN " + current.variable);
-            level++;
+        indent();
+        System.out.println("ASSIGN " + a.variable);
+        level++;
 
-            current.expression.visit(this);
+        a.expression.visit(this);
+        level--;
+        if (a.next != null) {
+            a.next.visit(this);
+        }
+    }
+
+    @Override
+    public void visitIfNode(IfNode node) {
+        indent();
+        System.out.println("IF");
+        level++;
+        indent();
+        System.out.println("CONDITION");
+        level++;
+        node.condition.visit(this);
+        level--;
+        indent();
+        System.out.println("THEN");
+        level++;
+        node.thenBranch.visit(this);
+        level--;
+        if (node.elseBranch != null) {
+            indent();
+            System.out.println("ELSE");
+            level++;
+            node.elseBranch.visit(this);
             level--;
-            current = (AssignmentNode) current.next;
+        }
+        level--;
+        if (node.next != null) {
+            node.next.visit(this);
+        }
+    }
+
+    @Override
+    public void visitWhileNode(WhileNode node) {
+        indent();
+        System.out.println("WHILE");
+        level++;
+        indent();
+        System.out.println("CONDITION");
+        level++;
+        node.condition.visit(this);
+        level--;
+        indent();
+        System.out.println("BODY");
+        level++;
+        node.body.visit(this);
+        level--;
+        level--;
+        if (node.next != null) {
+            node.next.visit(this);
         }
     }
 

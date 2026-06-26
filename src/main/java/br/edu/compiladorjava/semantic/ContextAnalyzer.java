@@ -46,37 +46,48 @@ public class ContextAnalyzer implements Visitor {
 
     @Override
     public void visitAssignmentNode(AssignmentNode a) {
+        Symbol s = table.retrieve(a.variable);
+        if (s == null) {
+            error("Variável '" + a.variable + "' não foi declarada", a);
+        }
+        a.expression.visit(this);
+        Type exprType = currentType;
+        if (s.getType() != exprType) {
+            error("Não é possível atribuir " + exprType + " a uma variável " + s.getType(), a);
+        }
+        if (a.next != null) {
+            a.next.visit(this);
+        }
+    }
 
-        AssignmentNode current = a;
+    @Override
+    public void visitIfNode(IfNode node) {
+        node.condition.visit(this);
+        if (currentType != Type.BOOLEAN) {
+            error("A condição do 'if' deve ser do tipo BOOLEAN", node);
+        }
+        if (node.thenBranch != null) {
+            node.thenBranch.visit(this);
+        }
+        if (node.elseBranch != null) {
+            node.elseBranch.visit(this);
+        }
+        if (node.next != null) {
+            node.next.visit(this);
+        }
+    }
 
-        while (current != null) {
-
-            Symbol s = table.retrieve(current.variable);
-
-            if (s == null) {
-                error(
-                        "Variável '" + current.variable +
-                                "' não foi declarada",
-                        current
-                );
-            }
-
-            current.expression.visit(this);
-
-            Type exprType = currentType;
-
-            if (s.getType() != exprType) {
-
-                error(
-                        "Não é possível atribuir "
-                                + exprType
-                                + " a uma variável "
-                                + s.getType(),
-                        current
-                );
-            }
-
-            current = (AssignmentNode) current.next;
+    @Override
+    public void visitWhileNode(WhileNode node) {
+        node.condition.visit(this);
+        if (currentType != Type.BOOLEAN) {
+            error("A condição do 'while' deve ser do tipo BOOLEAN", node);
+        }
+        if (node.body != null) {
+            node.body.visit(this);
+        }
+        if (node.next != null) {
+            node.next.visit(this);
         }
     }
 

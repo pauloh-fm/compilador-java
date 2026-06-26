@@ -11,6 +11,7 @@ import java.util.*;
 public class CodeGenerator implements Visitor {
     private final List<TamInstruction> code = new ArrayList<>();
     private final Map<String, Integer> addresses = new HashMap<>();
+    private final LabelGenerator labelGen = new LabelGenerator();
     private int nextAddress = 0;
     public List<TamInstruction> generate(ProgramNode program) {
         program.visit(this);
@@ -45,12 +46,73 @@ public class CodeGenerator implements Visitor {
 
     @Override
     public void visitAssignmentNode(AssignmentNode a) {
-        AssignmentNode current = a;
-        while (current != null) {
-            current.expression.visit(this);
-            int address = addresses.get(current.variable);
-            emit("STORE", String.valueOf(address));
-            current = (AssignmentNode) current.next;
+        a.expression.visit(this);
+        int address = addresses.get(a.variable);
+        emit("STORE", String.valueOf(address));
+        if (a.next != null) {
+            a.next.visit(this);
+        }
+    }
+
+    @Override
+    public void visitIfNode(IfNode node) {
+        String elseLabel = labelGen.nextLabel();
+        String endLabel = labelGen.nextLabel();
+
+        // Avalia condição
+        node.condition.visit(this);
+        // Desvia para o else caso falso
+        emit("JUMPF", elseLabel);
+
+        // Compila o bloco then
+        if (node.thenBranch != null) {
+            node.thenBranch.visit(this);
+        }
+        // Desvia para o fim do bloco condicional
+        emit("JUMP", endLabel);
+
+        // Rótulo do else
+        emit(elseLabel + ":");
+        if (node.elseBranch != null) {
+            node.elseBranch.visit(this);
+        }
+
+        // Rótulo do fim
+        emit(endLabel + ":");
+
+        // Continua a execução do próximo comando
+        if (node.next != null) {
+            node.next.visit(this);
+        }
+    }
+
+    @Override
+    public void visitWhileNode(WhileNode node) {
+        String startLabel = labelGen.nextLabel();
+        String endLabel = labelGen.nextLabel();
+
+        // Rótulo de início do laço
+        emit(startLabel + ":");
+
+        // Avalia condição
+        node.condition.visit(this);
+        // Desvia para o fim caso falso
+        emit("JUMPF", endLabel);
+
+        // Compila o corpo do laço
+        if (node.body != null) {
+            node.body.visit(this);
+        }
+
+        // Retorna ao início
+        emit("JUMP", startLabel);
+
+        // Rótulo de fim do laço
+        emit(endLabel + ":");
+
+        // Continua a execução do próximo comando
+        if (node.next != null) {
+            node.next.visit(this);
         }
     }
 

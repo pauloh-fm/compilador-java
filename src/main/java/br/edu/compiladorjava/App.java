@@ -16,7 +16,7 @@ public class App {
     private static final String ARQUIVO = "entrada.txt";
 
     public static String startupMessage() {
-        return "Compilador Java UNIVASF - Modo Sintático Direto";
+        return "Compilador Java UNIVASF";
     }
 
     public static void main(String[] args) {
