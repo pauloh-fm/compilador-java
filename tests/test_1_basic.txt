@@ -1,0 +1,7 @@
+program test1;
+var a: integer;
+var b: integer;
+begin
+    a := 10;
+    b := a * 2 + 5;
+end.

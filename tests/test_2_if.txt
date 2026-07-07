@@ -1,0 +1,10 @@
+program test2;
+var flag: boolean;
+var x: integer;
+begin
+    x := 5;
+    if x > 3 then
+        flag := true
+    else
+        flag := false;
+end.

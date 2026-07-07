@@ -1,0 +1,16 @@
+program test4;
+var x: integer;
+var y: integer;
+var result: boolean;
+begin
+    x := 10;
+    y := 20;
+    if x < y then
+    begin
+        while x < y do
+            x := x + 2;
+        result := true;
+    end
+    else
+        result := false;
+end.

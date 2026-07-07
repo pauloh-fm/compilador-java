@@ -1,0 +1,5 @@
+program test5;
+var a: integer;
+begin
+    b := 10;
+end.
